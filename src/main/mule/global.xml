@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9a062918-5ed9-43e3-b297-e9933d4bfa22" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="fbcdbce0-3940-4162-8877-d5b87fd5a9ee" >
+		<salesforce:basic-connection username="luzianofarias23@gmail.com" password="Matheus26" securityToken="OVJV8RsV1ozT1U4ZJk3ahnFf" />
+	</salesforce:sfdc-config>
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="e22a2488-e8b1-40ee-829f-2e1daee4913f" name="Router" api="api\proj-sales.raml" parser="RAML" >
+		<apikit:flow-mappings >
+			<apikit:flow-mapping resource="/client/{Id}" action="delete" flow-ref="delete-clientFlow" />
+			<apikit:flow-mapping resource="/client" action="post" flow-ref="create-clientFlow" />
+			<apikit:flow-mapping resource="/client" action="get" flow-ref="get-clients-all-flow" />
+			<apikit:flow-mapping resource="/client/{Id}" action="get" flow-ref="get-client-by-name-flow" />
+			<apikit:flow-mapping resource="/event-topic" action="post" flow-ref="create-event-topicFlow" />
+		</apikit:flow-mappings>
+	</apikit:config>
+	
+</mule>
