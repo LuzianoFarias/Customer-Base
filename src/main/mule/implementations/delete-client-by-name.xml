@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="delete-clientFlow" doc:id="1675e119-b29e-4373-a528-0ea4eba91edb" >
+		<logger level="INFO" doc:name="Logger" doc:id="3075fe1c-f312-4a39-9688-79761d81b525" message="Start of Flow" />
+		<salesforce:query doc:name="Query" doc:id="b59d1131-c220-4257-847f-97424aeca835" config-ref="Salesforce_Config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, Name FROM client__c WHERE Name=':Name']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[{
+	"Name": payload.Name
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="513acb2d-f4c8-4017-bc77-27efc1d04b81" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+
+payload map {
+    Id: $.Id,
+    Name: $.Name
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:delete doc:name="Delete" doc:id="a7fb464b-1ffa-4a77-b2ba-d6088cc8ede4" config-ref="Salesforce_Config" >
+			<salesforce:ids ><![CDATA[#[payload.Id]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Status Code" doc:id="575d459a-e6d8-45dc-9b97-cc6a8f54f6d7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status Code" : 200,
+	"Message" : "success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger1" doc:id="82d019a3-0331-41b0-a66f-7d4720b1b6b6" message="The end flow" />
+	</flow>
+</mule>

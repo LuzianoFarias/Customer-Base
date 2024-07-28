@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-clients-all-flow" doc:id="a7ac5aa4-f409-40be-a094-ac4611f5ba00" >
+		<logger level="INFO" doc:name="Logger" doc:id="6e7d34c3-5e97-4983-a62f-362a804f2224" message="Start Flow" />
+		<salesforce:query doc:name="Query" doc:id="90e5dbd0-53e0-44ff-8bc4-ff8ecc329d73" config-ref="Salesforce_Config" >
+			<salesforce:salesforce-query ><![CDATA[SELECT 
+    Id__c,
+    Name,
+    Phone__c,
+    Zip_Code__c, 
+    City__c, 
+    UF__c, 
+    Street__c
+FROM 
+    Client__c]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[{
+	"Name": attributes.queryParams.Name
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="23202776-2915-43aa-92d3-85863b998e9e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"Id"		 : $.Id__c,
+    "Name"		 : $.Name,
+    "PhoneNumber": $.Phone__c,
+    "ZipCode"	 : $.Zip_Code__c,
+    "Street"	 : $.Street__c,
+    "City"	 	 : $.City__c,
+    "UF"		 : $.UF__c
+    
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger1" doc:id="93d866da-e359-42d1-8ca0-96531e8372fb" message="The End Flow" />
+	</flow>
+</mule>
