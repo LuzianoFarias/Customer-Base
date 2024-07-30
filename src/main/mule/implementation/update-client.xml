@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="update-clientFlow">
-	    <logger level="INFO" doc:name="Logger" message="Start Flow" />
+	    <logger level="INFO" doc:name="Logger" message="Start Flow Update" />
 	
 	    <!-- Acessa o nome do payload -->
 	    
@@ -78,7 +78,7 @@ payload map {
 	        </ee:message>
 	    </ee:transform>
 	
-	    <logger level="INFO" doc:name="Logger" message="The End Flow" />
+	    <logger level="INFO" doc:name="Logger" message="The End Flow Update" />
 	</flow>
 
 
