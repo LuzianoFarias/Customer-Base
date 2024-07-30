@@ -6,9 +6,9 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<flow name="get-client-by-nameFlow" doc:id="21d70d00-0040-4474-95bb-5498ec998601" >
-		<logger level="INFO" doc:name="Logger" doc:id="92218e9f-9562-4191-ad3c-200d68697d48" message="Start Flow" />
-		<salesforce:query doc:name="Query" doc:id="f0fe2a34-30ae-4876-848f-d32b2d0dfc45" config-ref="Salesforce_Config" >
+	<flow name="get-clients-all-flow" doc:id="a7ac5aa4-f409-40be-a094-ac4611f5ba00" >
+		<logger level="INFO" doc:name="Logger" doc:id="6e7d34c3-5e97-4983-a62f-362a804f2224" message="Start Flow" />
+		<salesforce:query doc:name="Query" doc:id="90e5dbd0-53e0-44ff-8bc4-ff8ecc329d73" config-ref="Salesforce_Config" >
 			<salesforce:salesforce-query ><![CDATA[SELECT 
     Id__c,
     Name,
@@ -18,14 +18,12 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     UF__c, 
     Street__c
 FROM 
-    Client__c
-WHERE 
-	Name = ':Name']]></salesforce:salesforce-query>
+    Client__c]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[{
-	"Name": payload.Name
+	"Name": attributes.queryParams.Name
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<ee:transform doc:name="Transform Message" doc:id="9a8d7dbf-b035-4266-8c93-68f0485deeeb" >
+		<ee:transform doc:name="Transform Message" doc:id="23202776-2915-43aa-92d3-85863b998e9e" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -43,6 +41,6 @@ payload map {
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="6c1a854b-d8dc-48e1-b77e-521daf806b17" message="The End Flow" />
+		<logger level="INFO" doc:name="Logger1" doc:id="93d866da-e359-42d1-8ca0-96531e8372fb" message="The End Flow" />
 	</flow>
 </mule>
