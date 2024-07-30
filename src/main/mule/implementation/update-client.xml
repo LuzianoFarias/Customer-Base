@@ -33,7 +33,12 @@ output application/java
 ---
 (payload[0] default {}).Name
 	]]></ee:set-variable>
-	        </ee:variables>
+				<ee:set-variable variableName="varId" ><![CDATA[%dw 2.0
+output application/java
+---
+(payload[0] default {}).Id]]></ee:set-variable>
+	        
+</ee:variables>
 	    </ee:transform>
 	
 	    <!-- Upsert no Salesforce -->
@@ -54,9 +59,9 @@ output application/java
 		FROM 
 		    Client__c
 		WHERE 
-		    Name = ':Name']]></salesforce:salesforce-query>
+		    Id__c = ':Id']]></salesforce:salesforce-query>
 		    <salesforce:parameters><![CDATA[#[{
-		    "Name": vars.varName
+		    "Id": vars.varId
 		}]]]></salesforce:parameters>
 	</salesforce:query>
 

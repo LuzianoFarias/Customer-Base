@@ -19,6 +19,7 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
 			<apikit:flow-mapping resource="/client" action="get" flow-ref="get-clients-all-flow" />
 			<apikit:flow-mapping resource="/client/{Id}" action="get" flow-ref="get-client-by-name-flow" />
 			<apikit:flow-mapping resource="/event-topic" action="post" flow-ref="create-event-topicFlow" />
+			<apikit:flow-mapping resource="/client" action="put" flow-ref="update-clientFlow" />
 		</apikit:flow-mappings>
 	</apikit:config>
 	
