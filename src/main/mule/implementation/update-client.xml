@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="update-clientFlow">
+	    <logger level="INFO" doc:name="Logger" message="Start Flow" />
+	
+	    <!-- Acessa o nome do payload -->
+	    
+	    <!-- Transform Message para configurar o payload e as variáveis -->
+	    <ee:transform doc:name="Transform Message">
+	        <ee:message>
+	            <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload map {
+    Id__c: $.Id,
+    Name: $.Name,
+    Phone__c: $.PhoneNumber,
+    Zip_Code__c: $.ZipCode,
+    Street__c: $.Street,
+    City__c: $.City,
+    UF__c: $.UF
+}]]></ee:set-payload>
+	        </ee:message>
+	        <ee:variables>
+	            <ee:set-variable variableName="varName"><![CDATA[%dw 2.0
+output application/java
+---
+(payload[0] default {}).Name
+	]]></ee:set-variable>
+	        </ee:variables>
+	    </ee:transform>
+	
+	    <!-- Upsert no Salesforce -->
+	    <salesforce:upsert objectType="Client__c" config-ref="Salesforce_Config" externalIdFieldName="Id__c" />
+	
+	    <!-- Log da variável varName -->
+	
+	    <!-- Query no Salesforce -->
+		<salesforce:query doc:name="Query" config-ref="Salesforce_Config">
+		    <salesforce:salesforce-query><![CDATA[SELECT 
+		    Id__c,
+		    Name,
+		    Phone__c,
+		    Zip_Code__c, 
+		    City__c, 
+		    UF__c, 
+		    Street__c
+		FROM 
+		    Client__c
+		WHERE 
+		    Name = ':Name']]></salesforce:salesforce-query>
+		    <salesforce:parameters><![CDATA[#[{
+		    "Name": vars.varName
+		}]]]></salesforce:parameters>
+	</salesforce:query>
+
+	
+	    <ee:transform doc:name="Transform Message">
+	        <ee:message>
+	            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+ 	"Id": $.Id__c,
+    "Name": $.Name,
+    "PhoneNumber": $.Phone__c,
+    "ZipCode": $.Zip_Code__c,
+    "Street": $.Street__c,
+    "City": $.City__c,
+    "UF": $.UF__c
+}]]></ee:set-payload>
+	        </ee:message>
+	    </ee:transform>
+	
+	    <logger level="INFO" doc:name="Logger" message="The End Flow" />
+	</flow>
+
+
+</mule>
