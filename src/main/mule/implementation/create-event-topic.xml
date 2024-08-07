@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
 	<flow name="create-event-topicFlow" doc:id="22b03da3-eca5-48c2-b935-23f308ace269" >
 		<logger level="INFO" doc:name="Start Log" doc:id="93ec1cf6-6269-4dd0-ae1a-beceedf88f70" message="Start create event topic flow" />
-		<salesforce:publish-topic doc:id="6a41fd67-5a0e-4032-944c-412f1dd17417" topicName="#[payload.topic]" query="#[payload.Query]" doc:name="Create Topic Utility" config-ref="Salesforce_Config"/>
+		<salesforce:publish-topic doc:id="6a41fd67-5a0e-4032-944c-412f1dd17417" topicName="#[payload.topic]" query="#[payload.query]" doc:name="Create Topic Utility" config-ref="Salesforce_Config"/>
 		<logger level="INFO" doc:name="Logger" doc:id="25cb2c47-98f7-41e3-a5d8-847bd4abbe35" message="The End Flow" />
 	</flow>
 </mule>
