@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
 	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="fbcdbce0-3940-4162-8877-d5b87fd5a9ee" >
 		<salesforce:basic-connection username="luzianofarias23@gmail.com" password="Matheus26" securityToken="OVJV8RsV1ozT1U4ZJk3ahnFf" />
 	</salesforce:sfdc-config>
-	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="e22a2488-e8b1-40ee-829f-2e1daee4913f" name="Router" api="api\proj-sales.raml" parser="RAML" >
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="e22a2488-e8b1-40ee-829f-2e1daee4913f" name="Router" api="api\customer-base.raml" parser="RAML" >
 		<apikit:flow-mappings >
 			<apikit:flow-mapping resource="/client/{Id}" action="delete" flow-ref="delete-clientFlow" />
 			<apikit:flow-mapping resource="/client" action="post" flow-ref="create-clientFlow" />
