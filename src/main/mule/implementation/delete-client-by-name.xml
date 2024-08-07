@@ -9,8 +9,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<flow name="delete-clientFlow" doc:id="1675e119-b29e-4373-a528-0ea4eba91edb" >
 		<logger level="INFO" doc:name="Logger" doc:id="3075fe1c-f312-4a39-9688-79761d81b525" message="Start of Flow" />
 		<salesforce:query doc:name="Query" doc:id="b59d1131-c220-4257-847f-97424aeca835" config-ref="Salesforce_Config" >
-			<salesforce:salesforce-query ><![CDATA[SELECT Id, Name FROM client__c WHERE Name=':Name']]></salesforce:salesforce-query>
+			<salesforce:salesforce-query ><![CDATA[SELECT Id, Id__c, Name FROM client__c WHERE Id__c = ':Id__c' AND Name=':Name']]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[{
+	"Id__c": payload.Id,
 	"Name": payload.Name
 }]]]></salesforce:parameters>
 		</salesforce:query>
@@ -21,13 +22,14 @@ output application/java
 ---
 
 payload map {
-    Id: $.Id,
+    Id_Salesforce: $.Id,
+    Id: $.Id__c,
     Name: $.Name
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<salesforce:delete doc:name="Delete" doc:id="a7fb464b-1ffa-4a77-b2ba-d6088cc8ede4" config-ref="Salesforce_Config" >
-			<salesforce:ids ><![CDATA[#[payload.Id]]]></salesforce:ids>
+			<salesforce:ids ><![CDATA[#[payload.Id_Salesforce]]]></salesforce:ids>
 		</salesforce:delete>
 		<ee:transform doc:name="Status Code" doc:id="575d459a-e6d8-45dc-9b97-cc6a8f54f6d7" >
 			<ee:message >
