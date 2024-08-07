@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="acba3537-ea62-422a-819e-c0a308121849" >
+		<db:my-sql-connection host="sql10.freesqldatabase.com" port="3306" user="sql10722843" password="Tfz5rs7V9q" database="sql10722843" />
+	</db:config>
+	<flow name="client-streamingFlow" doc:id="ea95b2ec-51a7-4997-9166-6c36a3a22bcc" >
+		<salesforce:subscribe-topic-listener doc:name="Subscribe topic listener" doc:id="c53ecb2a-eb05-4aea-9ee5-a3fa3eeb487f" config-ref="Salesforce_Config" topic="sample"/>
+		<logger level="INFO" doc:name="Logger" doc:id="34a71398-6655-4934-895c-434af0c0c50f" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="c4737fe4-2660-4c2d-b5b9-d8402e048e9d" >
+			<when expression="#[attributes.'type' == &quot;created&quot;]">
+				<db:insert doc:name="Insert Client" doc:id="0166364e-bfad-4362-9abb-9df7e0c2a885" config-ref="Database_Config">
+					<db:sql ><![CDATA[INSERT INTO Client__c (Id_Salesforce,Id__c,Name,Phone__c,Zip_Code__c,City__c,UF__c,Street__c)VALUES (:IdSalesforce,:Id,:Name,:PhoneNumber,:ZipCode,:City,:UF,:Street);
+    
+    ]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	IdSalesforce: payload.Id,
+	Id: payload.Id__c,
+    Name: payload.Name,
+    PhoneNumber: payload.Phone__c,
+    ZipCode: payload.Zip_Code__c,
+    Street: payload.Street__c,
+    City: payload.City__c,
+    UF: payload.UF__c
+}]]]></db:input-parameters>
+				</db:insert>
+			</when>
+			<when expression="#[attributes.'type' == &quot;updated&quot;]">
+				<db:update doc:name="Update Client" doc:id="c525215a-b9b9-4dd6-8fdd-075b86139766" config-ref="Database_Config">
+					<db:sql ><![CDATA[UPDATE Client__c
+SET 
+	Name = :Name,
+    Phone__c = :PhoneNumber,
+    Zip_Code__c = :ZipCode,
+    City__c = :City,
+    UF__c = :UF,
+    Street__c = :Street
+WHERE Id__c = :Id;
+]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	
+	Id: payload.Id__c,
+    Name: payload.Name,
+    PhoneNumber: payload.Phone__c,
+    ZipCode: payload.Zip_Code__c,
+    Street: payload.Street__c,
+    City: payload.City__c,
+    UF: payload.UF__c
+}]]]></db:input-parameters>
+				</db:update>
+			</when>
+			<when expression="#[attributes.'type' == &quot;deleted&quot;]">
+				<db:delete doc:name="Delete Client" doc:id="e5919b12-8baf-4381-b055-714cad704a1a" config-ref="Database_Config">
+					<db:sql ><![CDATA[DELETE FROM Client__c WHERE Id_Salesforce = :Id]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	Id: payload.Id
+}]]]></db:input-parameters>
+				</db:delete>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="0048d547-c6ca-4ba6-a5e5-c6cbc9050184" message="Invalid Event Log"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="72ad7ea9-0b29-42b9-91be-25134ebd5067" message="End Log"/>
+	</flow>
+</mule>
